@@ -4,10 +4,6 @@ from streamlit_card import card
 st.set_page_config(page_title="🎮 Nerdial", layout="wide")
 st.title("🎮 Nerdial")
 
-# --- Session State for clicked card ---
-if "clicked_index" not in st.session_state:
-    st.session_state.clicked_index = None
-
 # --- Example Game Data ---
 games = [
     {
@@ -117,7 +113,7 @@ if st.button("🎯 Get Recommendations"):
     if not filtered_games:
         st.info("No games found — try adjusting your description or filters.")
 
-# --- Step 4: Display Cards Grid ---
+# --- Step 4: Display Cards and Expand Inline ---
 if filtered_games:
     st.subheader("🎲 Recommended Games")
     rows = [filtered_games[:3], filtered_games[3:]]  # 2 rows for grid
@@ -125,46 +121,42 @@ if filtered_games:
         cols = st.columns(3)
         for i, game in enumerate(row):
             with cols[i]:
-                if card(
+                clicked = card(
                     title=game["title"],
                     text=game["description"],
                     image=game["cover"],
                     url=None,
                     styles={
-                        "card": {"width": "300px", "height": "450px", "border-radius": "12px"},
+                        "card": {"width": "380px", "height": "450px", "border-radius": "12px"},
                         "img": {"object-fit": "cover", "height": "200px"},
                         "text": {"font-size": "0.8rem"}
                     }
-                ):
-                    st.session_state.clicked_index = games.index(game)
+                )
+                if clicked:
+                    st.markdown("---")
+                    cols_detail = st.columns([1, 2])
 
-# --- Step 5: Show Expanded Detail View ---
-if st.session_state.clicked_index is not None:
-    game = games[st.session_state.clicked_index]
-    st.markdown("---")
-    cols = st.columns([1, 2])
+                    with cols_detail[0]:
+                        st.image(game["cover"], use_container_width=True)
 
-    with cols[0]:
-        st.image(game["cover"], use_container_width=True)
+                    with cols_detail[1]:
+                        st.subheader(game["title"])
+                        st.write(f"**Developer:** {game['developer']}")
+                        st.write(f"**Release Date:** {game['release_date']}")
 
-    with cols[1]:
-        st.subheader(game["title"])
-        st.write(f"**Developer:** {game['developer']}")
-        st.write(f"**Release Date:** {game['release_date']}")
+                        m1, m2 = st.columns(2)
+                        with m1:
+                            st.metric("Metacritic", f"{game['metacritic']} / 100")
+                        with m2:
+                            st.metric("Recent Reviews", game["recent_reviews"])
 
-        m1, m2 = st.columns(2)
-        with m1:
-            st.metric("Metacritic", f"{game['metacritic']} / 100")
-        with m2:
-            st.metric("Recent Reviews", game["recent_reviews"])
-
-        tab1, tab2, tab3 = st.tabs(["📖 Description", "🔖 Tags", "💬 Reviews"])
-        with tab1:
-            st.write(game["description"])
-        with tab2:
-            st.write(", ".join(game["tags"]))
-        with tab3:
-            with st.expander("Read recent reviews"):
-                st.write("⭐ 'Amazing exploration and combat, 10/10'")
-                st.write("⭐ 'The art and music are incredible.'")
-                st.write("⭐ 'Tough but fair difficulty curve.'")
+                        tab1, tab2, tab3 = st.tabs(["📖 Description", "🔖 Tags", "💬 Reviews"])
+                        with tab1:
+                            st.write(game["description"])
+                        with tab2:
+                            st.write(", ".join(game["tags"]))
+                        with tab3:
+                            with st.expander("Read recent reviews"):
+                                st.write("⭐ 'Amazing exploration and combat, 10/10'")
+                                st.write("⭐ 'The art and music are incredible.'")
+                                st.write("⭐ 'Tough but fair difficulty curve.'")
