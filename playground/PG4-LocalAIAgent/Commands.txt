@@ -1,0 +1,7 @@
+python -m venv venv
+./venv/Scripts/activate
+
+ollama pull llama3.2
+ollama pull mbxai-embed-large 
+
+ollama list

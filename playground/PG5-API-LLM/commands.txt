@@ -1,0 +1,4 @@
+ollama pull mistral
+ollama run mistral 
+
+uvicorn main:app --reload

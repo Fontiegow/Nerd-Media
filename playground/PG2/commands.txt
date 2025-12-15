@@ -1,0 +1,14 @@
+$env:PATH += ";$env:USERPROFILE\.local\bin"
+
+uv sync
+
+docker run -d --name qdrantRagDB -p 6333:6333 -v "./qdrant_storage:/qdrant/storage"  qdrant/qdrant
+
+& E:/Nerd-Media/Nerd-Media/app/playground/PG2/.venv/Scripts/Activate.ps1
+
+npx inngest-cli@latest dev -u http://127.0.0.1:8000/api/inngest --no-discovery
+uv run uvicorn main:app
+
+uv run streamlit run ./steamlit_app.py
+
+E:/Nerd-Media/Nerd-Media/.venv/Scripts/Activate.ps1   
