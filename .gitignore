@@ -5,7 +5,7 @@ experiments/*
 **/.venv
 **/__pycache__
 *.pyc
-data/
+
 uploads/
 qdrant_storage/
 .env
